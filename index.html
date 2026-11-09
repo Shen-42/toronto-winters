@@ -7,11 +7,11 @@
 <style>
   :root {
     --bg: #fbfaf7; --fg: #1d1d1f; --muted: #6b6b70; --rule: #e3e1dc;
-    --nodata: #e6e4df; --bar: #2f6fa8;
+    --nodata: #e6e4df; --bar: #2f6fa8; --later: #a9b9c8; --kid: #f1e6cf;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #141416; --fg: #ececee; --muted: #9a9aa2; --rule: #2c2c31;
-            --nodata: #2a2a2f; --bar: #6aa6dc; }
+            --nodata: #2a2a2f; --bar: #6aa6dc; --later: #4a5866; --kid: #3a3324; }
   }
   body { background: var(--bg); color: var(--fg); margin: 0;
          font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -29,31 +29,35 @@
 <body>
 <main>
   <h1>Were Toronto Winters as Snowy as I Remember as a Kid?</h1>
-  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, station TORONTO CITY (Climate ID 6158355).</p>
+  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, stations TORONTO CITY (Climate ID 6158355) and TORONTO NORTH YORK (615S001).</p>
 
   <h2>Snow on the ground, day by day</h2>
-  <p class="muted">Each row is one winter, November to April. Darker means deeper snow.</p>
+  <p id="summary"></p>
+  <p class="muted">Each row is one winter, November to April. Darker means deeper snow. Shaded rows are my childhood winters, 2006–07 to 2015–16.</p>
   <figure id="strips"></figure>
 
   <h2>Days with snow on the ground</h2>
-  <p class="muted">Days with at least 1 cm, November to April.</p>
+  <p class="muted">Days with at least 1 cm, November to April. Dark bars are my childhood winters.</p>
   <figure id="days"></figure>
 
   <hr>
-  <p class="muted">The downtown station recorded no snow depth in the winters of 2009–10, 2010–11, 2011–12 and 2014–15, so those rows are marked "no data." It does not measure snowfall at all, so this page uses snow depth only. Blank days inside other winters are treated as no snow.</p>
+  <p class="muted">Most winters come from the downtown station (TORONTO CITY), about 5 km from Bayview and Eglinton. It has no snow depth readings for 2009–10, 2010–11, 2011–12 and 2014–15. Winters marked * are filled from the North York station, about 11 km away. In the two winters both stations recorded, North York had 17 more days of snow cover in 2012–13 and 4 fewer in 2013–14, so the filled winters are close but not exact. Blank days inside other winters are treated as no snow.</p>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
 <script>
 const MONTHS = [10, 11, 0, 1, 2, 3]; // Nov–Apr (0-based)
+const KID_FIRST = 2006, KID_LAST = 2015; // winters 2006–07 to 2015–16
+const isKid = w => w >= KID_FIRST && w <= KID_LAST;
 
 function winterOf(d) {
   const y = d.getUTCFullYear();
   return d.getUTCMonth() >= 6 ? y : y - 1;
 }
+const NORTH_YORK = new Set([2009, 2010, 2011, 2014]); // winters filled from TORONTO NORTH YORK
 function label(w) {
-  return `${w}–${String((w + 1) % 100).padStart(2, "0")}`;
+  return `${w}–${String((w + 1) % 100).padStart(2, "0")}${NORTH_YORK.has(w) ? " *" : ""}`;
 }
 // Map every date onto one reference season (Nov 2023 to Apr 2024; 2024 has Feb 29)
 function refDate(d) {
@@ -61,7 +65,7 @@ function refDate(d) {
   return new Date(Date.UTC(m >= 6 ? 2023 : 2024, m, d.getUTCDate()));
 }
 
-d3.csv("data/toronto_city_snwd.csv").then(raw => {
+d3.csv("data/toronto_snwd.csv").then(raw => {
   const rows = raw
     .map(r => ({ date: new Date(r.DATE + "T00:00:00Z"), mm: r.SNWD === "" ? null : +r.SNWD }))
     .filter(r => MONTHS.includes(r.date.getUTCMonth()));
@@ -80,6 +84,9 @@ d3.csv("data/toronto_city_snwd.csv").then(raw => {
   const css = getComputedStyle(document.documentElement);
   const nodataColor = css.getPropertyValue("--nodata").trim();
   const barColor = css.getPropertyValue("--bar").trim();
+  const laterColor = css.getPropertyValue("--later").trim();
+  const kidColor = css.getPropertyValue("--kid").trim();
+  const kidLabels = winters.filter(isKid).map(label);
   const start = new Date(Date.UTC(2023, 10, 1)), end = new Date(Date.UTC(2024, 4, 1));
 
   document.getElementById("strips").append(Plot.plot({
@@ -89,6 +96,7 @@ d3.csv("data/toronto_city_snwd.csv").then(raw => {
     color: { scheme: "blues", type: "sqrt", domain: [0, 40], clamp: true,
              legend: true, label: "Snow depth (cm)" },
     marks: [
+      Plot.barX(kidLabels, { x1: () => start, x2: () => end, y: d => d, fill: kidColor, insetTop: -2, insetBottom: -2 }),
       Plot.barX([...noData].map(label), { x1: () => start, x2: () => end, y: d => d, fill: nodataColor }),
       Plot.text([...noData].map(label), { x: () => new Date(Date.UTC(2024, 0, 31)), y: d => d,
         text: () => "no data", fill: "currentColor", fillOpacity: 0.55 }),
@@ -98,15 +106,22 @@ d3.csv("data/toronto_city_snwd.csv").then(raw => {
   }));
 
   const counts = winters.filter(w => !noData.has(w)).map(w => ({
-    w: label(w), days: byWinter.get(w).filter(r => r.mm >= 10).length
+    w: label(w), kid: isKid(w), days: byWinter.get(w).filter(r => r.mm >= 10).length
   }));
+
+  const avg = arr => Math.round(d3.mean(arr, d => d.days));
+  const kidC = counts.filter(d => d.kid), laterC = counts.filter(d => !d.kid);
+  document.getElementById("summary").textContent =
+    `In my childhood winters, downtown Toronto averaged ${avg(kidC)} days with snow on the ground ` +
+    `(${kidC.length} winters with data). Since then it has averaged ${avg(laterC)} days (${laterC.length} winters).`;
 
   document.getElementById("days").append(Plot.plot({
     width: 820, height: 300, marginBottom: 50,
     x: { domain: order, label: null, tickRotate: -40 },
     y: { label: "Days", grid: true },
+    color: { type: "identity" },
     marks: [
-      Plot.barY(counts, { x: "w", y: "days", fill: barColor, title: d => `${d.w}: ${d.days} days` }),
+      Plot.barY(counts, { x: "w", y: "days", fill: d => d.kid ? barColor : laterColor, title: d => `${d.w}: ${d.days} days` }),
       Plot.ruleY([0])
     ]
   }));
