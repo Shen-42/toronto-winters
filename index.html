@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toronto Winters</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --fg: #1d1d1f; --muted: #6b6b70; --rule: #e3e1dc;
+    --nodata: #e6e4df; --bar: #2f6fa8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141416; --fg: #ececee; --muted: #9a9aa2; --rule: #2c2c31;
+            --nodata: #2a2a2f; --bar: #6aa6dc; }
+  }
+  body { background: var(--bg); color: var(--fg); margin: 0;
+         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 12px; }
+  h2 { font-size: 1.15rem; margin: 40px 0 4px; }
+  p { margin: 0 0 12px; }
+  .muted, figcaption { color: var(--muted); font-size: 0.9rem; }
+  a { color: inherit; }
+  figure { margin: 16px 0 0; overflow-x: auto; }
+  figure svg { max-width: 100%; height: auto; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Were Toronto Winters as Snowy as I Remember as a Kid?</h1>
+  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, station TORONTO CITY (Climate ID 6158355).</p>
+
+  <h2>Snow on the ground, day by day</h2>
+  <p class="muted">Each row is one winter, November to April. Darker means deeper snow.</p>
+  <figure id="strips"></figure>
+
+  <h2>Days with snow on the ground</h2>
+  <p class="muted">Days with at least 1 cm, November to April.</p>
+  <figure id="days"></figure>
+
+  <hr>
+  <p class="muted">The downtown station recorded no snow depth in the winters of 2009–10, 2010–11, 2011–12 and 2014–15, so those rows are marked "no data." It does not measure snowfall at all, so this page uses snow depth only. Blank days inside other winters are treated as no snow.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+<script>
+const MONTHS = [10, 11, 0, 1, 2, 3]; // Nov–Apr (0-based)
+
+function winterOf(d) {
+  const y = d.getUTCFullYear();
+  return d.getUTCMonth() >= 6 ? y : y - 1;
+}
+function label(w) {
+  return `${w}–${String((w + 1) % 100).padStart(2, "0")}`;
+}
+// Map every date onto one reference season (Nov 2023 to Apr 2024; 2024 has Feb 29)
+function refDate(d) {
+  const m = d.getUTCMonth();
+  return new Date(Date.UTC(m >= 6 ? 2023 : 2024, m, d.getUTCDate()));
+}
+
+d3.csv("data/toronto_city_snwd.csv").then(raw => {
+  const rows = raw
+    .map(r => ({ date: new Date(r.DATE + "T00:00:00Z"), mm: r.SNWD === "" ? null : +r.SNWD }))
+    .filter(r => MONTHS.includes(r.date.getUTCMonth()));
+  rows.forEach(r => { r.winter = winterOf(r.date); r.ref = refDate(r.date); });
+
+  // Keep full winters only (the files start Jan 2006 and end Dec 2025)
+  const byWinter = d3.group(rows.filter(r => r.winter >= 2006 && r.winter <= 2024), r => r.winter);
+  const winters = [...byWinter.keys()].sort();
+  const noData = new Set(winters.filter(w => byWinter.get(w).every(r => r.mm === null)));
+  const order = winters.map(label);
+
+  const snowDays = rows.filter(r => !noData.has(r.winter) && r.winter >= 2006 && r.winter <= 2024 && r.mm > 0)
+    .map(r => ({ ...r, w: label(r.winter), cm: r.mm / 10,
+                 end: new Date(+r.ref + 864e5) }));
+
+  const css = getComputedStyle(document.documentElement);
+  const nodataColor = css.getPropertyValue("--nodata").trim();
+  const barColor = css.getPropertyValue("--bar").trim();
+  const start = new Date(Date.UTC(2023, 10, 1)), end = new Date(Date.UTC(2024, 4, 1));
+
+  document.getElementById("strips").append(Plot.plot({
+    width: 820, marginLeft: 70, height: 26 * winters.length + 40,
+    x: { type: "utc", domain: [start, end], tickFormat: "%b", label: null },
+    y: { domain: order, label: null, padding: 0.15 },
+    color: { scheme: "blues", type: "sqrt", domain: [0, 40], clamp: true,
+             legend: true, label: "Snow depth (cm)" },
+    marks: [
+      Plot.barX([...noData].map(label), { x1: () => start, x2: () => end, y: d => d, fill: nodataColor }),
+      Plot.text([...noData].map(label), { x: () => new Date(Date.UTC(2024, 0, 31)), y: d => d,
+        text: () => "no data", fill: "currentColor", fillOpacity: 0.55 }),
+      Plot.barX(snowDays, { x1: "ref", x2: "end", y: "w", fill: "cm",
+        title: r => `${r.date.toISOString().slice(0, 10)}: ${r.cm} cm` })
+    ]
+  }));
+
+  const counts = winters.filter(w => !noData.has(w)).map(w => ({
+    w: label(w), days: byWinter.get(w).filter(r => r.mm >= 10).length
+  }));
+
+  document.getElementById("days").append(Plot.plot({
+    width: 820, height: 300, marginBottom: 50,
+    x: { domain: order, label: null, tickRotate: -40 },
+    y: { label: "Days", grid: true },
+    marks: [
+      Plot.barY(counts, { x: "w", y: "days", fill: barColor, title: d => `${d.w}: ${d.days} days` }),
+      Plot.ruleY([0])
+    ]
+  }));
+});
+</script>
+</body>
+</html>
