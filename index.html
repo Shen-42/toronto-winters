@@ -7,55 +7,85 @@
 <style>
   :root {
     --bg: #fbfaf7; --fg: #1d1d1f; --muted: #6b6b70; --rule: #e3e1dc;
-    --nodata: #e6e4df; --bar: #2f6fa8; --later: #a9b9c8; --kid: #f1e6cf;
+    --empty: #ecebe6; --missing: #d9d6ce; --kid: #c2410c; --later: #8a8a91;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #141416; --fg: #ececee; --muted: #9a9aa2; --rule: #2c2c31;
-            --nodata: #2a2a2f; --bar: #6aa6dc; --later: #4a5866; --kid: #3a3324; }
+            --empty: #1f1f23; --missing: #34343b; --kid: #fb923c; --later: #7a7a82; }
   }
   body { background: var(--bg); color: var(--fg); margin: 0;
-         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+         font: 17px/1.6 Georgia, "Times New Roman", serif; }
   main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
-  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 12px; }
-  h2 { font-size: 1.15rem; margin: 40px 0 4px; }
-  p { margin: 0 0 12px; }
-  .muted, figcaption { color: var(--muted); font-size: 0.9rem; }
+  .text { max-width: 620px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 20px; }
+  h2 { font-size: 1.3rem; margin: 40px 0 8px; }
+  p { margin: 0 0 14px; }
+  li { margin-bottom: 8px; }
+  .muted { color: var(--muted); font: 0.85rem/1.5 system-ui, -apple-system, sans-serif; }
   a { color: inherit; }
-  figure { margin: 16px 0 0; overflow-x: auto; }
+  figure { margin: 16px 0 8px; overflow-x: auto; font-family: system-ui, -apple-system, sans-serif; }
   figure svg { max-width: 100%; height: auto; }
+  .key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; margin-right: 6px; border-radius: 2px; }
   hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }
 </style>
 </head>
 <body>
 <main>
   <h1>Were Toronto Winters as Snowy as I Remember as a Kid?</h1>
-  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, stations TORONTO CITY (Climate ID 6158355) and TORONTO NORTH YORK (615S001).</p>
 
-  <h2>Snow on the ground, day by day</h2>
-  <p id="summary"></p>
-  <p class="muted">Each row is one winter, November to April. Darker means deeper snow. Shaded rows are my childhood winters, 2006–07 to 2015–16.</p>
+  <div class="text">
+    <p>I recently stumbled on Volodymyr Agafonkin's <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Observable notebook</a> asking whether Kyiv winters were as snowy as he remembered. It got me thinking about my own childhood in Toronto, tobogganing in the parks with my brothers. I kind of miss how snowy it used to be. So I wanted to check whether Toronto winters really were snowier back then, or whether I just remember them that way.</p>
+    <p>The chart below uses daily snow depth from Environment and Climate Change Canada's downtown Toronto station. Each row is one winter, from November to the end of April.</p>
+  </div>
+
   <figure id="strips"></figure>
+  <div class="key muted">
+    <span><span class="swatch" style="background: var(--empty)"></span>No snow</span>
+    <span><span class="swatch" style="background: var(--missing)"></span>Not recorded</span>
+    <span>* Filled from the North York station</span>
+  </div>
 
-  <h2>Days with snow on the ground</h2>
-  <p class="muted">Days with at least 1 cm, November to April. Dark bars are my childhood winters.</p>
-  <figure id="days"></figure>
+  <h2>Observations</h2>
+  <ul class="text">
+    <li>2013–14 was the snowiest winter in the record. Snow covered the ground almost without a break from late November to the end of March, including 109 days in a row. It was also the coldest winter, averaging −5.5°C from December to February.</li>
+    <li>2011–12 had almost no snow: only 23 days with snow on the ground. It was also one of the warmest winters in the record.</li>
+    <li>2008–09 had a white Christmas, with 16 cm of snow on the ground on December 25.</li>
+    <li>2024–25 came after my childhood, but it had the deepest snow in the record: 46 cm on February 17, 2025.</li>
+    <li>In recent years, especially in high school, it felt like Toronto got little to no snow. The data partly backs this up. 2023–24 had only 26 days with snow on the ground and was the warmest winter in the record. But other recent winters, like 2019–20 and 2021–22, had plenty of snow.</li>
+  </ul>
+
+  <h2>Warmer winters, less snow</h2>
+  <p class="text">Each dot is one winter. Warmer winters had far fewer days with snow on the ground.</p>
+  <figure id="temp"></figure>
+  <div class="key muted">
+    <span><span class="swatch" style="background: var(--kid)"></span>My childhood (2006–07 to 2015–16)</span>
+    <span><span class="swatch" style="background: var(--later)"></span>Since then</span>
+  </div>
+
+  <h2>So, were winters snowier when I was a kid?</h2>
+  <div class="text">
+    <p id="summary"></p>
+    <p>Over the whole record, Toronto winters warmed by about 1°C per decade and lost about 5 days of snow cover per decade. Nineteen winters is a short record, though, and one unusual year moves those trends a lot. The years with deep, lasting snow that I remember, like 2013–14, were real, but they were also unusual.</p>
+  </div>
 
   <hr>
-  <p class="muted">Most winters come from the downtown station (TORONTO CITY). It has no snow depth readings for 2009–10, 2010–11, 2011–12 and 2014–15. Winters marked * are filled from the North York station, about 11 km away. In the two winters both stations recorded, North York had 17 more days of snow cover in 2012–13 and 4 fewer in 2013–14, so the filled winters are close but not exact. Blank days inside other winters are treated as no snow.</p>
+  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, stations TORONTO CITY (6158355) and TORONTO NORTH YORK (615S001). The downtown station has no snow depth readings for 2009–10, 2010–11, 2011–12 and 2014–15, so those winters come from the North York station. In the two winters both stations recorded, North York had 17 more days of snow cover in 2012–13 and 4 fewer in 2013–14. The downtown station also leaves many single days unrecorded, so some winters may have had more snow cover than the chart shows. Temperatures are from the downtown station.</p>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
 <script>
 const MONTHS = [10, 11, 0, 1, 2, 3]; // Nov–Apr (0-based)
+const FIRST = 2006, LAST = 2024;
 const KID_FIRST = 2006, KID_LAST = 2015; // winters 2006–07 to 2015–16
+const NORTH_YORK = new Set([2009, 2010, 2011, 2014]); // winters filled from TORONTO NORTH YORK
 const isKid = w => w >= KID_FIRST && w <= KID_LAST;
 
 function winterOf(d) {
   const y = d.getUTCFullYear();
   return d.getUTCMonth() >= 6 ? y : y - 1;
 }
-const NORTH_YORK = new Set([2009, 2010, 2011, 2014]); // winters filled from TORONTO NORTH YORK
 function label(w) {
   return `${w}–${String((w + 1) % 100).padStart(2, "0")}${NORTH_YORK.has(w) ? " *" : ""}`;
 }
@@ -65,66 +95,62 @@ function refDate(d) {
   return new Date(Date.UTC(m >= 6 ? 2023 : 2024, m, d.getUTCDate()));
 }
 
-d3.csv("data/toronto_snwd.csv").then(raw => {
-  const rows = raw
+const css = getComputedStyle(document.documentElement);
+const color = name => css.getPropertyValue(name).trim();
+
+Promise.all([d3.csv("data/toronto_snwd.csv"), d3.csv("data/winters.csv", d3.autoType)]).then(([raw, winters]) => {
+  const days = raw
     .map(r => ({ date: new Date(r.DATE + "T00:00:00Z"), mm: r.SNWD === "" ? null : +r.SNWD }))
     .filter(r => MONTHS.includes(r.date.getUTCMonth()));
-  rows.forEach(r => { r.winter = winterOf(r.date); r.ref = refDate(r.date); });
-
-  // Keep full winters only (the files start Jan 2006 and end Dec 2025)
-  const byWinter = d3.group(rows.filter(r => r.winter >= 2006 && r.winter <= 2024), r => r.winter);
-  const winters = [...byWinter.keys()].sort();
-  const noData = new Set(winters.filter(w => byWinter.get(w).every(r => r.mm === null)));
-  const order = winters.map(label);
-
-  const snowDays = rows.filter(r => !noData.has(r.winter) && r.winter >= 2006 && r.winter <= 2024 && r.mm > 0)
-    .map(r => ({ ...r, w: label(r.winter), cm: r.mm / 10,
-                 end: new Date(+r.ref + 864e5) }));
-
-  const css = getComputedStyle(document.documentElement);
-  const nodataColor = css.getPropertyValue("--nodata").trim();
-  const barColor = css.getPropertyValue("--bar").trim();
-  const laterColor = css.getPropertyValue("--later").trim();
-  const kidColor = css.getPropertyValue("--kid").trim();
-  const kidLabels = winters.filter(isKid).map(label);
+  days.forEach(r => {
+    r.winter = winterOf(r.date);
+    r.w = label(r.winter);
+    r.ref = refDate(r.date);
+    // In non-leap years, stretch Feb 28 over the Feb 29 slot so rows have no gap
+    const leap = r.date.getUTCFullYear() % 4 === 0;
+    const feb28 = r.date.getUTCMonth() === 1 && r.date.getUTCDate() === 28;
+    r.end = new Date(+r.ref + (feb28 && !leap ? 2 : 1) * 864e5);
+    r.cm = r.mm === null ? null : r.mm / 10;
+  });
+  const shown = days.filter(r => r.winter >= FIRST && r.winter <= LAST);
+  const order = d3.range(FIRST, LAST + 1).map(label);
   const start = new Date(Date.UTC(2023, 10, 1)), end = new Date(Date.UTC(2024, 4, 1));
 
   document.getElementById("strips").append(Plot.plot({
-    width: 820, marginLeft: 70, height: 26 * winters.length + 40,
+    width: 840, marginLeft: 70, marginRight: 10, height: 16 * order.length + 70,
     x: { type: "utc", domain: [start, end], tickFormat: "%b", label: null },
-    y: { domain: order, label: null, padding: 0.15 },
-    color: { scheme: "blues", type: "sqrt", domain: [0, 40], clamp: true,
-             legend: true, label: "Snow depth (cm)" },
+    y: { domain: order, label: null, padding: 0.12, tickSize: 0 },
+    color: { scheme: "turbo", domain: [0, 40], clamp: true, legend: true, label: "Snow depth (cm)", ticks: 5 },
     marks: [
-      Plot.barX(kidLabels, { x1: () => start, x2: () => end, y: d => d, fill: kidColor, insetTop: -2, insetBottom: -2 }),
-      Plot.barX([...noData].map(label), { x1: () => start, x2: () => end, y: d => d, fill: nodataColor }),
-      Plot.text([...noData].map(label), { x: () => new Date(Date.UTC(2024, 0, 31)), y: d => d,
-        text: () => "no data", fill: "currentColor", fillOpacity: 0.55 }),
-      Plot.barX(snowDays, { x1: "ref", x2: "end", y: "w", fill: "cm",
+      Plot.barX(shown.filter(r => r.cm === 0), { x1: "ref", x2: "end", y: "w", fill: color("--empty") }),
+      Plot.barX(shown.filter(r => r.cm === null), { x1: "ref", x2: "end", y: "w", fill: color("--missing") }),
+      Plot.barX(shown.filter(r => r.cm > 0), { x1: "ref", x2: "end", y: "w", fill: "cm",
         title: r => `${r.date.toISOString().slice(0, 10)}: ${r.cm} cm` })
     ]
   }));
 
-  const counts = winters.filter(w => !noData.has(w)).map(w => ({
-    w: label(w), kid: isKid(w), days: byWinter.get(w).filter(r => r.mm >= 10).length
-  }));
+  winters.forEach(d => { d.kid = isKid(d.winter); d.label = label(d.winter).replace(" *", ""); });
 
-  const avg = arr => Math.round(d3.mean(arr, d => d.days));
-  const kidC = counts.filter(d => d.kid), laterC = counts.filter(d => !d.kid);
-  document.getElementById("summary").textContent =
-    `In my childhood winters, downtown Toronto averaged ${avg(kidC)} days with snow on the ground ` +
-    `(${kidC.length} winters with data). Since then it has averaged ${avg(laterC)} days (${laterC.length} winters).`;
-
-  document.getElementById("days").append(Plot.plot({
-    width: 820, height: 300, marginBottom: 50,
-    x: { domain: order, label: null, tickRotate: -40 },
-    y: { label: "Days", grid: true },
+  document.getElementById("temp").append(Plot.plot({
+    width: 840, height: 360, marginLeft: 50,
+    x: { label: "Average temperature, December to February (°C)", nice: true },
+    y: { label: "Days with snow on the ground", grid: true, domain: [0, 130] },
     color: { type: "identity" },
     marks: [
-      Plot.barY(counts, { x: "w", y: "days", fill: d => d.kid ? barColor : laterColor, title: d => `${d.w}: ${d.days} days` }),
-      Plot.ruleY([0])
+      Plot.linearRegressionY(winters, { x: "djf_temp_c", y: "snow_days", stroke: "currentColor", strokeOpacity: 0.3, ci: 0 }),
+      Plot.dot(winters, { x: "djf_temp_c", y: "snow_days", r: 5,
+        fill: d => d.kid ? color("--kid") : color("--later"),
+        title: d => `${d.label}: ${d.snow_days} days, ${d.djf_temp_c}°C` }),
+      Plot.text(winters, { x: "djf_temp_c", y: "snow_days", text: "label", dy: -11, fontSize: 10, fill: "currentColor", fillOpacity: 0.7 })
     ]
   }));
+
+  const avg = arr => Math.round(d3.mean(arr, d => d.snow_days));
+  const kid = winters.filter(d => d.kid), later = winters.filter(d => !d.kid);
+  document.getElementById("summary").textContent =
+    `Barely. My childhood winters, 2006–07 to 2015–16, averaged ${avg(kid)} days with snow on the ground. ` +
+    `The ${later.length} winters since then averaged ${avg(later)}. ` +
+    `Both periods swing a lot from year to year. My childhood had the snowiest winter in the record and one of the least snowy.`;
 });
 </script>
 </body>
