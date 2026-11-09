@@ -8,7 +8,7 @@ Live page: https://shen-42.github.io/toronto-winters/
 
 - One strip per winter showing snow depth day by day, November to April, with unrecorded days marked
 - Scatter plot of winter temperature against days with snow on the ground
-- Observations on notable winters and a comparison of 2006–07 to 2015–16 with later years
+- Findings on notable winters, with conclusions and limitations
 
 ## Run locally
 

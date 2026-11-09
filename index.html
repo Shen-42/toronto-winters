@@ -15,62 +15,66 @@
   }
   body { background: var(--bg); color: var(--fg); margin: 0;
          font: 17px/1.6 Georgia, "Times New Roman", serif; }
-  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
-  .text { max-width: 620px; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
   h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 20px; }
-  h2 { font-size: 1.3rem; margin: 40px 0 8px; }
+  h2 { font-size: 1.3rem; margin: 44px 0 10px; }
   p { margin: 0 0 14px; }
   li { margin-bottom: 8px; }
+  .lead { font-size: 1.1rem; }
   .muted { color: var(--muted); font: 0.85rem/1.5 system-ui, -apple-system, sans-serif; }
   a { color: inherit; }
-  figure { margin: 16px 0 8px; overflow-x: auto; font-family: system-ui, -apple-system, sans-serif; }
-  figure svg { max-width: 100%; height: auto; }
-  .key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+  figure { margin: 16px 0 6px; font-family: system-ui, -apple-system, sans-serif; }
+  figure svg { max-width: 100%; height: auto; display: block; }
+  .key { display: flex; gap: 16px; flex-wrap: wrap; margin: 4px 0 14px; }
   .swatch { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; margin-right: 6px; border-radius: 2px; }
-  hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 44px 0 16px; }
 </style>
 </head>
 <body>
 <main>
   <h1>Were Toronto Winters as Snowy as I Remember as a Kid?</h1>
 
-  <div class="text">
-    <p>I recently stumbled on Volodymyr Agafonkin's <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Observable notebook</a> asking whether Kyiv winters were as snowy as he remembered. It got me thinking about my own childhood in Toronto, tobogganing in the parks with my brothers. I kind of miss how snowy it used to be. So I wanted to check whether Toronto winters really were snowier back then, or whether I just remember them that way.</p>
-    <p>The chart below uses daily snow depth from Environment and Climate Change Canada's downtown Toronto station. Each row is one winter, from November to the end of April.</p>
-  </div>
+  <p class="lead">Not by much. Toronto averaged 70 days with snow on the ground per winter during my childhood (2006–07 to 2015–16) and 68 days in the nine winters since. The difference between individual winters is far larger: from 23 to 122 days. Temperature accounts for much of that spread, with warmer winters having fewer days of snow cover.</p>
 
+  <p>This page adapts Volodymyr Agafonkin's <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">analysis of Kyiv winters</a> to Toronto. I remember long winters of tobogganing with my brothers, and recent winters seemed to have much less snow. This page checks that memory against station records.</p>
+
+  <h2>Data and method</h2>
+  <p>Daily snow depth comes from Environment and Climate Change Canada's TORONTO CITY station (Climate ID 6158355), downtown. That station recorded no snow depth in four winters (2009–10, 2010–11, 2011–12 and 2014–15). Those winters use the TORONTO NORTH YORK station (615S001) instead and are marked *. A day counts as snow-covered when depth is at least 1 cm. Each winter runs from November 1 to April 30. Temperatures are December–February means from TORONTO CITY.</p>
+
+  <h2>Snow depth by winter</h2>
+  <figure id="legend"></figure>
   <figure id="strips"></figure>
   <div class="key muted">
     <span><span class="swatch" style="background: var(--empty)"></span>No snow</span>
     <span><span class="swatch" style="background: var(--missing)"></span>Not recorded</span>
-    <span>* Filled from the North York station</span>
+    <span>* From the North York station</span>
   </div>
 
-  <h2>Observations</h2>
-  <ul class="text">
-    <li>2013–14 was the snowiest winter in the record. Snow covered the ground almost without a break from late November to the end of March, including 109 days in a row. It was also the coldest winter, averaging −5.5°C from December to February.</li>
-    <li>2011–12 had almost no snow: only 23 days with snow on the ground. It was also one of the warmest winters in the record.</li>
-    <li>2008–09 had a white Christmas, with 16 cm of snow on the ground on December 25.</li>
-    <li>2024–25 came after my childhood, but it had the deepest snow in the record: 46 cm on February 17, 2025.</li>
-    <li>In recent years, especially in high school, it felt like Toronto got little to no snow. The data partly backs this up. 2023–24 had only 26 days with snow on the ground and was the warmest winter in the record. But other recent winters, like 2019–20 and 2021–22, had plenty of snow.</li>
+  <h2>Findings</h2>
+  <ul>
+    <li>Snow cover ranged from 23 to 122 days per winter, and both extremes fall in my childhood. 2013–14 had 122 days, including 109 in a row from late November to the end of March. 2011–12 had 23.</li>
+    <li>The snowiest winter was also the coldest. 2013–14 averaged −5.5°C from December to February, the lowest in the record. 2011–12 averaged 0.8°C, the second-highest.</li>
+    <li>Recent winters are mixed. 2023–24 was the warmest winter in the record (1.3°C) and had 26 days of snow cover, which matches my impression of near-snowless winters in high school. But 2019–20 (113 days) and 2021–22 (91 days) were among the snowiest.</li>
+    <li>Deep snow and lasting snow are different things. 2024–25 had the deepest snow in the record, 46 cm on February 17, 2025, but only an average number of snow-covered days (71).</li>
+    <li>Nine of the 13 winters with a December 25 reading had a white Christmas (at least 2 cm on the ground). 2008–09 and 2017–18 had the most, 16 cm each.</li>
   </ul>
 
-  <h2>Warmer winters, less snow</h2>
-  <p class="text">Each dot is one winter. Warmer winters had far fewer days with snow on the ground.</p>
+  <h2>Temperature and snow cover</h2>
+  <p>Warmer winters had fewer snow-covered days (correlation −0.69 across 19 winters). The line is a least-squares fit. Hover over a point for its values.</p>
   <figure id="temp"></figure>
   <div class="key muted">
-    <span><span class="swatch" style="background: var(--kid)"></span>My childhood (2006–07 to 2015–16)</span>
-    <span><span class="swatch" style="background: var(--later)"></span>Since then</span>
+    <span><span class="swatch" style="background: var(--kid)"></span>Childhood (2006–07 to 2015–16)</span>
+    <span><span class="swatch" style="background: var(--later)"></span>2016–17 onward</span>
   </div>
 
-  <h2>So, were winters snowier when I was a kid?</h2>
-  <div class="text">
-    <p id="summary"></p>
-    <p>Over the whole record, Toronto winters warmed by about 1°C per decade and lost about 5 days of snow cover per decade. Nineteen winters is a short record, though, and one unusual year moves those trends a lot. The years with deep, lasting snow that I remember, like 2013–14, were real, but they were also unusual.</p>
-  </div>
+  <h2>Conclusion</h2>
+  <p>The records do not support the memory of much snowier childhood winters. The 2-day difference in average snow cover is small next to the spread between individual winters. Across the full record, December–February temperature rose about 1°C per decade and snow cover fell about 5 days per decade, but 19 winters is too short to separate a trend from year-to-year variation. A longer record, such as Toronto Pearson Airport's, would test this better.</p>
+
+  <h2>Limitations</h2>
+  <p>The downtown station leaves many days unrecorded (gray in the chart), so its snow cover counts are likely low. North York recorded 17 more snow-covered days than downtown in 2012–13 and 4 fewer in 2013–14, so the four winters filled from North York are approximate.</p>
 
   <hr>
-  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, stations TORONTO CITY (6158355) and TORONTO NORTH YORK (615S001). The downtown station has no snow depth readings for 2009–10, 2010–11, 2011–12 and 2014–15, so those winters come from the North York station. In the two winters both stations recorded, North York had 17 more days of snow cover in 2012–13 and 4 fewer in 2013–14. The downtown station also leaves many single days unrecorded, so some winters may have had more snow cover than the chart shows. Temperatures are from the downtown station.</p>
+  <p class="muted">Adapted from <a href="https://observablehq.com/@mourner/were-kyiv-winters-as-snowy-as-i-remember-as-a-kid">Were Kyiv Winters as Snowy as I Remember as a Kid?</a> by <a href="https://observablehq.com/@mourner">Volodymyr Agafonkin</a>. Data: Environment and Climate Change Canada, Historical Climate Data.</p>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -80,6 +84,9 @@ const MONTHS = [10, 11, 0, 1, 2, 3]; // Nov–Apr (0-based)
 const FIRST = 2006, LAST = 2024;
 const KID_FIRST = 2006, KID_LAST = 2015; // winters 2006–07 to 2015–16
 const NORTH_YORK = new Set([2009, 2010, 2011, 2014]); // winters filled from TORONTO NORTH YORK
+const LABELLED = new Set([2011, 2013, 2014, 2015, 2019, 2023, 2024]); // winters named in the scatter plot
+const LABEL_BELOW = new Set([2011]); // avoids overlapping 2015–16
+const WIDTH = 728;
 const isKid = w => w >= KID_FIRST && w <= KID_LAST;
 
 function winterOf(d) {
@@ -97,6 +104,7 @@ function refDate(d) {
 
 const css = getComputedStyle(document.documentElement);
 const color = name => css.getPropertyValue(name).trim();
+const depthScale = { scheme: "turbo", domain: [0, 40], clamp: true, label: "Snow depth (cm)", ticks: 5 };
 
 Promise.all([d3.csv("data/toronto_snwd.csv"), d3.csv("data/winters.csv", d3.autoType)]).then(([raw, winters]) => {
   const days = raw
@@ -116,11 +124,13 @@ Promise.all([d3.csv("data/toronto_snwd.csv"), d3.csv("data/winters.csv", d3.auto
   const order = d3.range(FIRST, LAST + 1).map(label);
   const start = new Date(Date.UTC(2023, 10, 1)), end = new Date(Date.UTC(2024, 4, 1));
 
+  document.getElementById("legend").append(Plot.legend({ color: depthScale, marginLeft: 8, width: 320 }));
+
   document.getElementById("strips").append(Plot.plot({
-    width: 840, marginLeft: 70, marginRight: 10, height: 16 * order.length + 70,
+    width: WIDTH, marginLeft: 66, marginRight: 4, height: 17 * order.length + 30,
     x: { type: "utc", domain: [start, end], tickFormat: "%b", label: null },
     y: { domain: order, label: null, padding: 0.12, tickSize: 0 },
-    color: { scheme: "turbo", domain: [0, 40], clamp: true, legend: true, label: "Snow depth (cm)", ticks: 5 },
+    color: depthScale,
     marks: [
       Plot.barX(shown.filter(r => r.cm === 0), { x1: "ref", x2: "end", y: "w", fill: color("--empty") }),
       Plot.barX(shown.filter(r => r.cm === null), { x1: "ref", x2: "end", y: "w", fill: color("--missing") }),
@@ -129,28 +139,26 @@ Promise.all([d3.csv("data/toronto_snwd.csv"), d3.csv("data/winters.csv", d3.auto
     ]
   }));
 
-  winters.forEach(d => { d.kid = isKid(d.winter); d.label = label(d.winter).replace(" *", ""); });
+  winters.forEach(d => { d.kid = isKid(d.winter); d.name = label(d.winter).replace(" *", ""); });
 
   document.getElementById("temp").append(Plot.plot({
-    width: 840, height: 360, marginLeft: 50,
-    x: { label: "Average temperature, December to February (°C)", nice: true },
-    y: { label: "Days with snow on the ground", grid: true, domain: [0, 130] },
+    width: WIDTH, height: 400, marginLeft: 44, marginTop: 30, marginRight: 24, marginBottom: 44, inset: 12,
+    style: { fontSize: "12px" },
+    x: { label: "December–February mean temperature (°C)", labelAnchor: "center", labelArrow: "none", nice: true },
+    y: { label: "Days with snow on the ground", labelArrow: "none", grid: true, domain: [0, 130] },
     color: { type: "identity" },
     marks: [
-      Plot.linearRegressionY(winters, { x: "djf_temp_c", y: "snow_days", stroke: "currentColor", strokeOpacity: 0.3, ci: 0 }),
-      Plot.dot(winters, { x: "djf_temp_c", y: "snow_days", r: 5,
+      Plot.linearRegressionY(winters, { x: "djf_temp_c", y: "snow_days", stroke: "currentColor", strokeOpacity: 0.35, strokeDasharray: "4,3", ci: 0 }),
+      Plot.dot(winters, { x: "djf_temp_c", y: "snow_days", r: 6, stroke: color("--bg"), strokeWidth: 1.5,
         fill: d => d.kid ? color("--kid") : color("--later"),
-        title: d => `${d.label}: ${d.snow_days} days, ${d.djf_temp_c}°C` }),
-      Plot.text(winters, { x: "djf_temp_c", y: "snow_days", text: "label", dy: -11, fontSize: 10, fill: "currentColor", fillOpacity: 0.7 })
+        channels: { Winter: "name", "Snow days": "snow_days", "Mean temp (°C)": "djf_temp_c" },
+        tip: { fill: color("--bg"), stroke: color("--rule"), format: { x: false, y: false, fill: false } } }),
+      Plot.text(winters.filter(d => LABELLED.has(d.winter) && !LABEL_BELOW.has(d.winter)), { x: "djf_temp_c", y: "snow_days",
+        text: "name", dy: -14, fontSize: 11, fill: "currentColor", fillOpacity: 0.8 }),
+      Plot.text(winters.filter(d => LABEL_BELOW.has(d.winter)), { x: "djf_temp_c", y: "snow_days",
+        text: "name", dy: 16, fontSize: 11, fill: "currentColor", fillOpacity: 0.8 })
     ]
   }));
-
-  const avg = arr => Math.round(d3.mean(arr, d => d.snow_days));
-  const kid = winters.filter(d => d.kid), later = winters.filter(d => !d.kid);
-  document.getElementById("summary").textContent =
-    `Barely. My childhood winters, 2006–07 to 2015–16, averaged ${avg(kid)} days with snow on the ground. ` +
-    `The ${later.length} winters since then averaged ${avg(later)}. ` +
-    `Both periods swing a lot from year to year. My childhood had the snowiest winter in the record and one of the least snowy.`;
 });
 </script>
 </body>
